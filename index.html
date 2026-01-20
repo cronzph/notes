@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronzph NotesHub - Professional Notes Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <rect width="32" height="32" rx="8" fill="#4F46E5"/>
+                    <path d="M10 12h12M10 16h12M10 20h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Cronz PhNotesHub</span>
+            </div>
+            <button id="openModal" class="btn-primary">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 5v10M5 10h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                New Note
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="notes-header">
+                <h1>Cronzph Notes</h1>
+                <p>Organize and manage your ideas efficiently</p>
+            </div>
+            <div class="notes-list" id="notesList">
+                <!-- Notes will be displayed here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Create/Edit Note Modal -->
+    <div id="noteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Create New Note</h2>
+                <button class="close">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="noteTitle">Title</label>
+                    <input type="text" id="noteTitle" placeholder="Enter note title" class="input-field">
+                </div>
+
+                <div class="form-group">
+                    <label for="noteText">Content</label>
+                    <textarea id="noteText" placeholder="Write your note here..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Images</label>
+                    <input type="file" id="imageInput" accept="image/*" multiple>
+                    <label for="imageInput" class="upload-label">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M3 16l5-5 3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="7.5" cy="7.5" r="1.5" fill="currentColor"/>
+                        </svg>
+                        Choose Images
+                    </label>
+                    <div id="imagePreview" class="image-preview"></div>
+                </div>
+
+                <button id="saveNote" class="btn-primary btn-full">Save Note</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Note Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="viewTitle"></h2>
+                <button class="close-view">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="view-meta">
+                    <span id="viewDate" class="meta-date"></span>
+                    <div class="view-actions">
+                        <button id="copyNote" class="btn-secondary btn-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <rect x="5" y="5" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M3 11V3a1 1 0 011-1h8" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                            Copy Text
+                        </button>
+                        <button id="editNote" class="btn-secondary btn-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M11.5 2.5l2 2L6 12H4v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Edit
+                        </button>
+                    </div>
+                </div>
+                <div id="viewText" class="view-content"></div>
+                <div id="viewImages" class="view-images"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
