@@ -2,7 +2,7 @@
 
 A beautiful, lightweight, and professional notes management application that allows you to create, manage, and share notes with ease - **no account login required!**
 
-![License](https://ibb.co/xqxS3gky"><img src="https://i.ibb.co/XxcZV5Q9/Screenshot-2026-01-20-115231.jpg)
+![License](https://i.ibb.co/XxcZV5Q9/Screenshot-2026-01-20-115231.jpg)
 
 ## ✨ Features
 
