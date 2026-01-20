@@ -2,7 +2,7 @@
 
 A beautiful, lightweight, and professional notes management application that allows you to create, manage, and share notes with ease - **no account login required!**
 
-![License](https://i.ibb.co/XxcZV5Q9/Screenshot-2026-01-20-115231.jpg)
+![NotesHub Screenshot](https://i.ibb.co/XxcZV5Q9/Screenshot-2026-01-20-115231.jpg)
 
 ## ✨ Features
 
@@ -50,79 +50,78 @@ A beautiful, lightweight, and professional notes management application that all
    
    a. Create a new project on [Supabase](https://supabase.com/)
    
-   b. Create a `notes` table with the following schema:
+   b. Run this SQL in your Supabase SQL Editor to create the database schema:
+
+   ```sql
    -- Step 1: Drop the existing table if you want to start fresh
--- (Skip this if you have important data you want to keep)
-DROP TABLE IF EXISTS notes;
+   -- (Skip this if you have important data you want to keep)
+   DROP TABLE IF EXISTS notes;
 
--- Step 2: Create the notes table with all required fields
-CREATE TABLE notes (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    title TEXT NOT NULL,
-    text TEXT,
-    images JSONB,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+   -- Step 2: Create the notes table with all required fields
+   CREATE TABLE notes (
+       id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+       title TEXT NOT NULL,
+       text TEXT,
+       images JSONB,
+       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+       updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
 
--- Step 3: Enable Row Level Security
-ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
+   -- Step 3: Enable Row Level Security
+   ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
 
--- Step 4: Create policy to allow all operations (for public access)
-CREATE POLICY "Allow all operations" ON notes
-FOR ALL USING (true) WITH CHECK (true);
+   -- Step 4: Create policy to allow all operations (for public access)
+   CREATE POLICY "Allow all operations" ON notes
+   FOR ALL USING (true) WITH CHECK (true);
 
--- Step 5: Create storage bucket for images (if not exists)
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('note-images', 'note-images', true)
-ON CONFLICT (id) DO NOTHING;
+   -- Step 5: Create storage bucket for images (if not exists)
+   INSERT INTO storage.buckets (id, name, public)
+   VALUES ('note-images', 'note-images', true)
+   ON CONFLICT (id) DO NOTHING;
 
--- Step 6: Set up storage policies for the bucket
--- Allow public access to read images
-CREATE POLICY "Public Access"
-ON storage.objects FOR SELECT
-USING ( bucket_id = 'note-images' );
+   -- Step 6: Set up storage policies for the bucket
+   -- Allow public access to read images
+   CREATE POLICY "Public Access"
+   ON storage.objects FOR SELECT
+   USING ( bucket_id = 'note-images' );
 
--- Allow anyone to upload images
-CREATE POLICY "Allow Upload"
-ON storage.objects FOR INSERT
-WITH CHECK ( bucket_id = 'note-images' );
+   -- Allow anyone to upload images
+   CREATE POLICY "Allow Upload"
+   ON storage.objects FOR INSERT
+   WITH CHECK ( bucket_id = 'note-images' );
 
--- Allow anyone to delete images
-CREATE POLICY "Allow Delete"
-ON storage.objects FOR DELETE
-USING ( bucket_id = 'note-images' );
+   -- Allow anyone to delete images
+   CREATE POLICY "Allow Delete"
+   ON storage.objects FOR DELETE
+   USING ( bucket_id = 'note-images' );
 
--- Step 7: Create a function to automatically update updated_at timestamp
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
+   -- Step 7: Create a function to automatically update updated_at timestamp
+   CREATE OR REPLACE FUNCTION update_updated_at_column()
+   RETURNS TRIGGER AS $$
+   BEGIN
+       NEW.updated_at = NOW();
+       RETURN NEW;
+   END;
+   $$ language 'plpgsql';
 
--- Step 8: Create trigger to auto-update updated_at
-CREATE TRIGGER update_notes_updated_at 
-    BEFORE UPDATE ON notes 
-    FOR EACH ROW 
-    EXECUTE FUNCTION update_updated_at_column();
+   -- Step 8: Create trigger to auto-update updated_at
+   CREATE TRIGGER update_notes_updated_at 
+       BEFORE UPDATE ON notes 
+       FOR EACH ROW 
+       EXECUTE FUNCTION update_updated_at_column();
    ```
-   
-   c. Create a storage bucket named `note-images`:
-   - Go to Storage in your Supabase dashboard
-   - Create a new bucket called `note-images`
-   - Make it public (or configure policies as needed)
 
 3. **Configure the application**
    
-   Open `script.js` and replace the Supabase configuration:
-   ```javascript
-   const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-   const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-   ```
+   a. Open the app in your browser - you'll see a setup modal
    
-   You can find these values in your Supabase project settings under API.
+   b. Enter your Supabase credentials:
+   - **Supabase URL**: Found in Project Settings → API (looks like `https://xxxxx.supabase.co`)
+   - **Anon Key**: Found in Project Settings → API (starts with `eyJ...`)
+   
+   c. Click "Save & Continue"
+   
+   Your credentials are stored securely in your browser's localStorage and never uploaded to GitHub.
 
 4. **Run the application**
    
@@ -145,6 +144,7 @@ cronzph-noteshub/
 ├── index.html          # Main HTML file
 ├── styles.css          # All styling and responsive design
 ├── script.js           # Application logic and Supabase integration
+├── .gitignore          # Git ignore file (keeps credentials safe)
 └── README.md           # This file
 ```
 
@@ -178,6 +178,7 @@ cronzph-noteshub/
 ## 🔒 Privacy & Security
 
 - **No Account Required** - Your notes are stored in your Supabase instance
+- **Secure Credentials** - API keys stored in browser localStorage, never in source code
 - **Public or Private** - Configure Supabase Row Level Security policies as needed
 - **Image Compression** - Images are automatically compressed to save storage
 - **Secure Storage** - All data is stored in Supabase's secure infrastructure
@@ -238,7 +239,7 @@ This project is licensed under the MIT License - see below for details:
 ```
 MIT License
 
-Copyright (c) 2025 CronzPh
+Copyright (c) 2026 CronzPh
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
