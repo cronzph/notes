@@ -16,6 +16,8 @@ let selectedImages = [];
 let existingImageUrls = []; // For edit mode
 let currentEditingNoteId = null;
 let currentViewNote = null;
+let allNotes = []; // Store all notes for filtering
+let filteredNotes = []; // Store filtered results
 
 // DOM Elements - Create Modal
 const modal = document.getElementById('noteModal');
@@ -38,6 +40,13 @@ const viewText = document.getElementById('viewText');
 const viewImages = document.getElementById('viewImages');
 const copyNoteBtn = document.getElementById('copyNote');
 const editNoteBtn = document.getElementById('editNote');
+
+// DOM Elements - Search and Filter
+const searchInput = document.getElementById('searchInput');
+const clearSearchBtn = document.getElementById('clearSearch');
+const dateFilter = document.getElementById('dateFilter');
+const sortBy = document.getElementById('sortBy');
+const resultsInfo = document.getElementById('resultsInfo');
 
 // Create Modal Controls
 openModalBtn.onclick = () => {
@@ -68,6 +77,121 @@ window.onclick = (event) => {
         currentViewNote = null;
     }
 };
+
+// Search and Filter Event Listeners
+searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.trim();
+    clearSearchBtn.style.display = searchTerm ? 'flex' : 'none';
+    applyFilters();
+});
+
+clearSearchBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearSearchBtn.style.display = 'none';
+    applyFilters();
+});
+
+dateFilter.addEventListener('change', applyFilters);
+sortBy.addEventListener('change', applyFilters);
+
+// Apply Filters Function
+function applyFilters() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const dateFilterValue = dateFilter.value;
+    const sortValue = sortBy.value;
+    
+    // Start with all notes
+    filteredNotes = [...allNotes];
+    
+    // Apply search filter
+    if (searchTerm) {
+        filteredNotes = filteredNotes.filter(note => {
+            const titleMatch = note.title.toLowerCase().includes(searchTerm);
+            const textMatch = note.text && note.text.toLowerCase().includes(searchTerm);
+            return titleMatch || textMatch;
+        });
+    }
+    
+    // Apply date filter
+    if (dateFilterValue !== 'all') {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        filteredNotes = filteredNotes.filter(note => {
+            const noteDate = new Date(note.created_at);
+            
+            switch(dateFilterValue) {
+                case 'today':
+                    return noteDate >= today;
+                case 'week':
+                    const weekAgo = new Date(today);
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    return noteDate >= weekAgo;
+                case 'month':
+                    const monthAgo = new Date(today);
+                    monthAgo.setMonth(monthAgo.getMonth() - 1);
+                    return noteDate >= monthAgo;
+                case 'year':
+                    const yearAgo = new Date(today);
+                    yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+                    return noteDate >= yearAgo;
+                default:
+                    return true;
+            }
+        });
+    }
+    
+    // Apply sorting
+    switch(sortValue) {
+        case 'newest':
+            filteredNotes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            break;
+        case 'oldest':
+            filteredNotes.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            break;
+        case 'title':
+            filteredNotes.sort((a, b) => a.title.localeCompare(b.title));
+            break;
+        case 'title-desc':
+            filteredNotes.sort((a, b) => b.title.localeCompare(a.title));
+            break;
+    }
+    
+    // Update results info
+    updateResultsInfo(searchTerm, dateFilterValue);
+    
+    // Display filtered notes
+    displayNotes(filteredNotes);
+}
+
+// Update Results Info
+function updateResultsInfo(searchTerm, dateFilterValue) {
+    const total = allNotes.length;
+    const filtered = filteredNotes.length;
+    
+    if (searchTerm || dateFilterValue !== 'all') {
+        resultsInfo.style.display = 'block';
+        let infoText = `Showing ${filtered} of ${total} note${total !== 1 ? 's' : ''}`;
+        
+        if (searchTerm) {
+            infoText += ` matching "${searchTerm}"`;
+        }
+        
+        if (dateFilterValue !== 'all') {
+            const filterLabels = {
+                'today': 'from today',
+                'week': 'from this week',
+                'month': 'from this month',
+                'year': 'from this year'
+            };
+            infoText += ` ${filterLabels[dateFilterValue]}`;
+        }
+        
+        resultsInfo.textContent = infoText;
+    } else {
+        resultsInfo.style.display = 'none';
+    }
+}
 
 // Clear Form
 function clearForm() {
@@ -428,7 +552,8 @@ async function loadNotes() {
         
         if (error) throw error;
         
-        displayNotes(data);
+        allNotes = data || [];
+        applyFilters();
     } catch (error) {
         console.error('Error loading notes:', error);
         notesList.innerHTML = `

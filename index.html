@@ -33,6 +33,42 @@
                 <h1>Cronzph Notes</h1>
                 <p>Organize and manage your ideas efficiently</p>
             </div>
+            
+            <!-- Search and Filter Section -->
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" class="search-icon">
+                        <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 12l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search notes by title or content..." class="search-input">
+                    <button id="clearSearch" class="clear-search" style="display: none;">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="filter-controls">
+                    <select id="dateFilter" class="filter-select">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="year">This Year</option>
+                    </select>
+                    
+                    <select id="sortBy" class="filter-select">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="title">Title (A-Z)</option>
+                        <option value="title-desc">Title (Z-A)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="results-info" id="resultsInfo" style="display: none;"></div>
+            
             <div class="notes-list" id="notesList">
                 <!-- Notes will be displayed here -->
             </div>
